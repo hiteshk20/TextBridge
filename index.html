@@ -2,324 +2,233 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#0f172a" />
-  <meta name="description" content="Zero-backend, encrypted text bridge between your devices." />
-  <title>TextBridge | Encrypted Device Bridge</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TextBridge — Send text to any device</title>
+  <meta name="description" content="Share text between devices securely. No server, no login, no cost." />
   <link rel="manifest" href="manifest.json" />
-  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230ea5e9'/%3E%3Cpath d='M30 35 L50 55 L70 35 M30 65 L50 45 L70 65' stroke='white' stroke-width='10' stroke-linecap='round' fill='none'/%3E%3C/svg%3E" />
   <style>
-    :root {
-      --bg: #0b1020;
-      --panel: rgba(30, 41, 59, 0.72);
-      --panel-solid: #151c2c;
-      --text: #f8fafc;
-      --muted: #94a3b8;
-      --accent: #0ea5e9;
-      --accent-2: #8b5cf6;
-      --success: #10b981;
-      --danger: #ef4444;
-      --warning: #f59e0b;
-      --radius: 18px;
-      --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45);
-      --blur: 20px;
-    }
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    html, body { height: 100%; margin: 0; }
+    * { box-sizing: border-box; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: radial-gradient(ellipse at top, #172554 0%, var(--bg) 55%),
-                  radial-gradient(ellipse at bottom right, #4c1d95 0%, transparent 45%);
-      color: var(--text);
-      display: flex; flex-direction: column; align-items: center;
-      min-height: 100vh;
-      padding: 24px 16px 40px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      margin: 0;
+      background: #f8f9fa;
+      color: #1a1a1a;
+      line-height: 1.5;
     }
-    .app {
-      width: 100%; max-width: 720px;
+    .wrap {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 32px 20px 60px;
     }
-    header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 24px;
+    header { margin-bottom: 28px; }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0 0 6px;
+      letter-spacing: -0.02em;
     }
-    .brand {
-      display: flex; align-items: center; gap: 12px;
-    }
-    .logo {
-      width: 42px; height: 42px; border-radius: 12px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      display: grid; place-items: center; box-shadow: 0 8px 24px rgba(14, 165, 233, 0.3);
-    }
-    .logo svg { width: 26px; height: 26px; stroke: white; }
-    .brand h1 { font-size: 1.35rem; margin: 0; letter-spacing: -0.02em; }
-    .brand p { margin: 0; font-size: 0.78rem; color: var(--muted); }
-    .badge {
-      font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
-      padding: 5px 10px; border-radius: 999px; background: rgba(16, 185, 129, 0.15); color: var(--success);
-      border: 1px solid rgba(16, 185, 129, 0.25);
+    .tagline {
+      color: #5a5a5a;
+      font-size: 0.95rem;
+      margin: 0;
     }
     .card {
-      background: var(--panel);
-      backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur));
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow: hidden;
+      background: #fff;
+      border: 1px solid #e2e4e7;
+      border-radius: 10px;
+      padding: 22px;
       margin-bottom: 18px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     }
     .tabs {
-      display: flex; background: rgba(15, 23, 42, 0.5);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
     }
     .tab {
-      flex: 1; padding: 16px; text-align: center; cursor: pointer;
-      font-weight: 600; font-size: 0.85rem; color: var(--muted);
-      border-bottom: 2px solid transparent; transition: 0.2s;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      border: 1px solid #e2e4e7;
+      background: #fff;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.95rem;
+      color: #444;
     }
-    .tab:hover { color: var(--text); }
-    .tab.active { color: var(--accent); border-color: var(--accent); background: rgba(14, 165, 233, 0.06); }
-    .body { padding: 22px; }
-    .section-title {
-      font-size: 1.05rem; font-weight: 700; margin: 0 0 6px;
+    .tab.active {
+      background: #1a73e8;
+      color: #fff;
+      border-color: #1a73e8;
     }
-    .section-desc {
-      font-size: 0.85rem; color: var(--muted); margin: 0 0 18px; line-height: 1.5;
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #444;
+      margin-bottom: 6px;
     }
-    textarea, input[type="text"], input[type="password"] {
-      width: 100%; background: rgba(15, 23, 42, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px;
-      color: var(--text); padding: 14px; font-size: 1rem; font-family: inherit;
-      outline: none; transition: 0.2s;
+    textarea, input[type="text"] {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #d0d4d9;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      color: #1a1a1a;
+      background: #fff;
+      resize: vertical;
+      outline: none;
     }
-    textarea { min-height: 160px; resize: vertical; }
-    textarea:focus, input:focus { border-color: var(--accent); background: rgba(15, 23, 42, 0.8); }
-    ::placeholder { color: #64748b; }
-    .row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 14px; }
-    .row > * { flex: 1; min-width: 140px; }
+    textarea { min-height: 140px; }
+    textarea:focus, input:focus { border-color: #1a73e8; }
+    .hint {
+      font-size: 0.82rem;
+      color: #666;
+      margin-top: 6px;
+    }
+    .row { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
     .btn {
-      border: none; border-radius: 12px; padding: 14px 18px;
-      font-size: 0.95rem; font-weight: 600; cursor: pointer;
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+      padding: 11px 18px;
+      border-radius: 8px;
+      border: 1px solid #d0d4d9;
+      background: #fff;
+      color: #1a73e8;
+      font-weight: 500;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.15s;
     }
-    .btn:active { transform: scale(0.98); }
+    .btn:hover { background: #f1f6fd; }
     .btn-primary {
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: white; box-shadow: 0 10px 28px rgba(14, 165, 233, 0.28);
+      background: #1a73e8;
+      color: #fff;
+      border-color: #1a73e8;
     }
-    .btn-primary:hover { box-shadow: 0 12px 34px rgba(14, 165, 233, 0.38); }
-    .btn-secondary { background: rgba(255,255,255,0.08); color: var(--text); border: 1px solid rgba(255,255,255,0.1); }
-    .btn-secondary:hover { background: rgba(255,255,255,0.12); }
-    .btn-success { background: rgba(16, 185, 129, 0.18); color: var(--success); border: 1px solid rgba(16,185,129,0.25); }
-    .btn-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239,68,68,0.25); }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .field-group { margin-bottom: 16px; }
-    label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
-    .checkbox {
-      display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: var(--muted); cursor: pointer;
-    }
-    .checkbox input { width: 18px; height: 18px; accent-color: var(--accent); }
+    .btn-primary:hover { background: #1557b0; }
     .result {
-      background: rgba(15, 23, 42, 0.55); border: 1px dashed rgba(255,255,255,0.12);
-      border-radius: 14px; padding: 16px; word-break: break-all; font-size: 0.85rem;
-      color: var(--muted); margin-top: 16px; display: none;
+      display: none;
+      margin-top: 16px;
+      padding: 14px;
+      background: #f1f6fd;
+      border: 1px solid #c6d9f5;
+      border-radius: 8px;
     }
     .result.show { display: block; }
-    .qr-wrap { display: flex; justify-content: center; margin-top: 18px; }
-    .qr { padding: 12px; background: white; border-radius: 12px; }
-    .status {
-      display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--muted); margin-top: 14px;
+    .link-box {
+      word-break: break-all;
+      font-size: 0.9rem;
+      color: #1a1a1a;
+      margin-bottom: 10px;
     }
-    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
-    .dot.green { background: var(--success); box-shadow: 0 0 10px var(--success); }
-    .dot.yellow { background: var(--warning); box-shadow: 0 0 10px var(--warning); }
-    .dot.red { background: var(--danger); box-shadow: 0 0 10px var(--danger); }
-    .hidden { display: none !important; }
-    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
-    .toast {
-      position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(80px);
-      background: rgba(15, 23, 42, 0.95); color: white; padding: 12px 22px; border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 12px 40px rgba(0,0,0,0.4);
-      font-size: 0.9rem; font-weight: 500; transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-      z-index: 1000;
+    .read-result {
+      white-space: pre-wrap;
+      font-size: 1rem;
+      color: #1a1a1a;
+      margin-bottom: 10px;
     }
-    .toast.show { transform: translateX(-50%) translateY(0); }
     .footer {
-      text-align: center; font-size: 0.75rem; color: var(--muted); margin-top: 8px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #777;
+      margin-top: 24px;
     }
-    .footer a { color: var(--accent); text-decoration: none; }
-    .peer-steps { display: grid; gap: 12px; }
-    .step { padding: 14px; border-radius: 12px; background: rgba(15,23,42,0.45); border: 1px solid rgba(255,255,255,0.06); }
-    .step-title { font-weight: 700; font-size: 0.85rem; margin-bottom: 6px; color: var(--text); }
-    .step p { margin: 0; font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
-    .signal-box { font-size: 0.75rem; min-height: 90px; }
-    @media (max-width: 540px) {
-      .brand h1 { font-size: 1.15rem; }
-      .badge { display: none; }
-      .body { padding: 18px; }
+    .hidden { display: none !important; }
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin: 0 0 10px;
     }
+    .steps {
+      background: #f8f9fa;
+      border: 1px solid #e2e4e7;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+      color: #444;
+    }
+    .steps ol { margin: 0; padding-left: 20px; }
+    .steps li { margin-bottom: 6px; }
   </style>
 </head>
 <body>
-  <div class="app">
+  <div class="wrap">
     <header>
-      <div class="brand">
-        <div class="logo">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-          </svg>
-        </div>
-        <div>
-          <h1>TextBridge</h1>
-          <p>Zero-server encrypted bridge</p>
-        </div>
-      </div>
-      <div class="badge">100% Free</div>
+      <h1>TextBridge</h1>
+      <p class="tagline">Send text to any device. No app install. No login. No cost.</p>
     </header>
+
+    <div class="steps">
+      <ol>
+        <li>Open this website on the device that has the text.</li>
+        <li>Paste the text and create a secure link.</li>
+        <li>Send the link to the other person through WhatsApp, email, SMS, etc.</li>
+        <li>They open the link in their browser and read the text instantly.</li>
+      </ol>
+    </div>
 
     <main class="card">
       <div class="tabs">
-        <div class="tab active" data-tab="link" onclick="switchTab('link')">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-          Secure Link
+        <button class="tab active" id="tabSend" onclick="showTab('send')">Send text</button>
+        <button class="tab" id="tabRead" onclick="showTab('read')">Read text</button>
+      </div>
+
+      <!-- SEND -->
+      <div id="sendView">
+        <label for="sendText">Text to send</label>
+        <textarea id="sendText" placeholder="Paste or type your message here…"></textarea>
+
+        <label for="sendPass" style="margin-top: 16px;">Password (optional)</label>
+        <input type="text" id="sendPass" placeholder="Leave blank for automatic password" />
+        <p class="hint">If you leave this blank, the password is included in the link so the other person only needs to open it. If you set a password, share it with them separately.</p>
+
+        <div class="row">
+          <button class="btn btn-primary" onclick="createLink()">Create secure link</button>
         </div>
-        <div class="tab" data-tab="p2p" onclick="switchTab('p2p')">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
-          Live P2P
+
+        <div class="result" id="sendResult">
+          <div class="section-title">Your secure link</div>
+          <div class="link-box" id="linkBox"></div>
+          <div class="row">
+            <button class="btn" onclick="copyLink()">Copy link</button>
+            <button class="btn" onclick="shareLink()">Share</button>
+          </div>
         </div>
       </div>
 
-      <div class="body">
-        <!-- SECURE LINK MODE -->
-        <div id="linkMode">
-          <div class="field-group">
-            <label>Your Text</label>
-            <textarea id="linkInput" placeholder="Paste any text you want to send to another device…"></textarea>
-          </div>
-          <div class="field-group">
-            <label>Passphrase / Key</label>
-            <input type="text" id="linkPass" placeholder="Leave blank to auto-generate a strong key" />
-          </div>
-          <label class="checkbox" style="margin-bottom: 14px;">
-            <input type="checkbox" id="includePass" checked />
-            <span>Include passphrase in the link (convenient). Uncheck to share it separately (more secure).</span>
-          </label>
-          <div class="row">
-            <button class="btn btn-primary" onclick="createSecureLink()">🔒 Encrypt & Create Link</button>
-            <button class="btn btn-secondary" onclick="shareLink()">📤 Share</button>
-          </div>
-          <div class="result" id="linkResult">
-            <div id="linkText"></div>
-            <div class="qr-wrap" id="qrWrap"></div>
-            <div class="row" style="margin-top: 14px;">
-              <button class="btn btn-secondary" onclick="copyLink()">Copy Link</button>
-              <button class="btn btn-success" onclick="copyKey()">Copy Key Only</button>
-            </div>
-          </div>
+      <!-- READ -->
+      <div id="readView" class="hidden">
+        <label for="readPayload">Paste the link or the encrypted code here</label>
+        <textarea id="readPayload" placeholder="https://yourname.github.io/textbridge/#t=...&k=...
+Or paste the long encrypted code only"></textarea>
 
-          <div style="margin-top: 28px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 20px;">
-            <div class="section-title">Receive a Secure Message</div>
-            <p class="section-desc">Paste the encrypted message or key below, or just open the link you were sent.</p>
-            <div class="field-group">
-              <label>Encrypted Payload (if link wasn't used)</label>
-              <textarea id="receivePayload" class="mono" placeholder="Paste the encrypted block here…"></textarea>
-            </div>
-            <div class="field-group">
-              <label>Passphrase</label>
-              <input type="text" id="receivePass" placeholder="Enter the passphrase…" />
-            </div>
-            <button class="btn btn-primary" onclick="decryptMessage()">🔓 Decrypt Message</button>
-            <div class="result" id="decryptResult">
-              <div id="decryptedText" style="white-space: pre-wrap;"></div>
-              <div class="row" style="margin-top: 12px;">
-                <button class="btn btn-success" onclick="copyDecrypted()">Copy Text</button>
-              </div>
-            </div>
-          </div>
+        <label for="readPass" style="margin-top: 16px;">Password</label>
+        <input type="text" id="readPass" placeholder="Only needed if you set a custom password" />
+
+        <div class="row">
+          <button class="btn btn-primary" onclick="readText()">Read text</button>
         </div>
 
-        <!-- LIVE P2P MODE -->
-        <div id="p2pMode" class="hidden">
-          <div class="section-title">Real-Time Encrypted Channel</div>
-          <p class="section-desc">No server touches your text. A WebRTC data channel is used between the two devices. Signaling is done manually via the codes below.</p>
-
-          <div class="peer-steps">
-            <div class="step">
-              <div class="step-title">1. Choose a shared password</div>
-              <input type="text" id="p2pPass" placeholder="Both devices must type the same password" />
-            </div>
-
-            <div class="step">
-              <div class="step-title">2. Device A — Create a room</div>
-              <button class="btn btn-primary" onclick="createP2P()">Create Offer</button>
-              <div class="status"><span class="dot" id="aDot"></span><span id="aStatus">Not connected</span></div>
-              <div class="result" id="aOffer" style="margin-top: 10px;">
-                <div class="section-title" style="font-size: 0.8rem;">Copy this code to Device B</div>
-                <textarea id="aOfferText" class="signal-box mono" readonly></textarea>
-              </div>
-            </div>
-
-            <div class="step">
-              <div class="step-title">3. Device B — Paste offer & create answer</div>
-              <textarea id="bOfferIn" class="signal-box mono" placeholder="Paste Device A's offer code here…"></textarea>
-              <button class="btn btn-primary" onclick="createAnswer()">Create Answer</button>
-              <div class="result" id="bAnswer" style="margin-top: 10px;">
-                <div class="section-title" style="font-size: 0.8rem;">Copy this code back to Device A</div>
-                <textarea id="bAnswerText" class="signal-box mono" readonly></textarea>
-              </div>
-            </div>
-
-            <div class="step">
-              <div class="step-title">4. Device A — Paste answer</div>
-              <textarea id="aAnswerIn" class="signal-box mono" placeholder="Paste Device B's answer code here…"></textarea>
-              <button class="btn btn-success" onclick="acceptAnswer()">Connect</button>
-            </div>
-
-            <div class="step" id="chatBox" style="display: none;">
-              <div class="step-title">Connected — Send Text</div>
-              <div class="status"><span class="dot green" id="connDot"></span><span id="connStatus">Connected</span></div>
-              <textarea id="p2pInput" style="min-height: 100px; margin-top: 10px;" placeholder="Type or paste text here and hit Send…"></textarea>
-              <div class="row">
-                <button class="btn btn-primary" onclick="sendP2P()">Send</button>
-                <button class="btn btn-secondary" onclick="copyP2PReceived()">Copy Received</button>
-              </div>
-              <div class="result show" id="p2pReceivedBox" style="margin-top: 14px;">
-                <div id="p2pReceived" style="white-space: pre-wrap; color: var(--text);">Received text will appear here…</div>
-              </div>
-            </div>
+        <div class="result" id="readResult">
+          <div class="section-title">Message</div>
+          <div class="read-result" id="readOutput"></div>
+          <div class="row">
+            <button class="btn" onclick="copyReadText()">Copy text</button>
           </div>
         </div>
       </div>
     </main>
 
     <div class="footer">
-      Built for GitHub Pages · No backend · No API keys · Open source · <a href="#" onclick="window.open('https://github.com/new', '_blank')">Deploy now</a>
+      Works on every device with a browser. No server stores your data.
     </div>
   </div>
 
-  <div class="toast" id="toast"></div>
-
   <script>
-    // ===== UTILS =====
-    const $ = id => document.getElementById(id);
-    const sleep = ms => new Promise(r => setTimeout(r, ms));
-
-    function showToast(msg) {
-      const t = $('toast'); t.textContent = msg; t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 2600);
-    }
-
-    async function copyToClipboard(text) {
-      try {
-        await navigator.clipboard.writeText(text);
-        showToast('Copied to clipboard');
-      } catch (e) {
-        const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select();
-        document.execCommand('copy'); document.body.removeChild(ta); showToast('Copied to clipboard');
-      }
-    }
-
+    // Simple helpers
+    function $(id) { return document.getElementById(id); }
     function b64enc(buf) {
       return btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
     }
@@ -327,21 +236,18 @@
       str += new Array(5 - str.length % 4).join('=');
       return Uint8Array.from(atob(str.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
     }
-    function generatePass() {
+    function randomPass() {
       const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
-      return Array.from(crypto.getRandomValues(new Uint8Array(14))).map(b => chars[b % chars.length]).join('');
+      return Array.from(crypto.getRandomValues(new Uint8Array(12))).map(b => chars[b % chars.length]).join('');
     }
-
-    // ===== CRYPTO =====
     async function deriveKey(password, salt) {
       const mat = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), { name: 'PBKDF2' }, false, ['deriveKey']);
       return crypto.subtle.deriveKey(
-        { name: 'PBKDF2', salt, iterations: 100_000, hash: 'SHA-256' },
+        { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
         mat, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
       );
     }
-
-    async function encryptText(plain, password) {
+    async function encrypt(plain, password) {
       const salt = crypto.getRandomValues(new Uint8Array(16));
       const iv = crypto.getRandomValues(new Uint8Array(12));
       const key = await deriveKey(password, salt);
@@ -350,8 +256,7 @@
       out.set(salt, 0); out.set(iv, salt.length); out.set(new Uint8Array(cipher), salt.length + iv.length);
       return b64enc(out);
     }
-
-    async function decryptText(payload, password) {
+    async function decrypt(payload, password) {
       const data = b64dec(payload);
       const salt = data.slice(0, 16), iv = data.slice(16, 28), cipher = data.slice(28);
       const key = await deriveKey(password, salt);
@@ -359,333 +264,92 @@
       return new TextDecoder().decode(plain);
     }
 
-    // ===== TABS =====
-    function switchTab(name) {
-      document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
-      $('linkMode').classList.toggle('hidden', name !== 'link');
-      $('p2pMode').classList.toggle('hidden', name !== 'p2p');
+    // Tabs
+    function showTab(name) {
+      $('sendView').classList.toggle('hidden', name !== 'send');
+      $('readView').classList.toggle('hidden', name !== 'read');
+      $('tabSend').classList.toggle('active', name === 'send');
+      $('tabRead').classList.toggle('active', name === 'read');
     }
 
-    // ===== SECURE LINK MODE =====
-    let currentLink = '', currentKey = '';
-
-    async function createSecureLink() {
-      const text = $('linkInput').value.trim();
-      if (!text) return showToast('Please enter some text');
-      let pass = $('linkPass').value.trim();
-      if (!pass) { pass = generatePass(); $('linkPass').value = pass; }
-      const payload = await encryptText(text, pass);
-      currentKey = pass; currentLink = '';
-
-      const include = $('includePass').checked;
-      const url = new URL(location.href);
-      url.hash = '#m=' + encodeURIComponent(payload) + (include ? '&k=' + encodeURIComponent(pass) : '');
-      currentLink = url.toString();
-
-      $('linkText').innerHTML = `<strong>Link ready.</strong><br>${include ? 'The passphrase is embedded.' : 'Share the passphrase separately.'}<br><br><span class="mono" style="color:var(--accent);">${currentLink.slice(0, 90)}…</span>`;
-      $('linkResult').classList.add('show');
-      renderQR(currentLink);
-      showToast(include ? 'Secure link created' : 'Link created — share key separately');
+    // Create link
+    let currentLink = '';
+    async function createLink() {
+      const text = $('sendText').value;
+      if (!text.trim()) return alert('Please type or paste some text first.');
+      let pass = $('sendPass').value.trim();
+      if (!pass) pass = randomPass();
+      try {
+        const encrypted = await encrypt(text, pass);
+        const url = new URL(location.href);
+        url.hash = '#t=' + encodeURIComponent(encrypted) + '&k=' + encodeURIComponent(pass);
+        currentLink = url.toString();
+        $('linkBox').textContent = currentLink;
+        $('sendResult').classList.add('show');
+      } catch (e) {
+        alert('Could not create link. Please try again.');
+      }
+    }
+    function copyLink() {
+      if (!currentLink) return;
+      navigator.clipboard.writeText(currentLink).then(() => alert('Link copied!')).catch(() => {
+        const t = document.createElement('textarea'); t.value = currentLink; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); alert('Link copied!');
+      });
+    }
+    async function shareLink() {
+      if (!currentLink) await createLink();
+      if (navigator.share) {
+        try { await navigator.share({ title: 'TextBridge', text: 'Here is the text:', url: currentLink }); return; } catch (e) {}
+      }
+      copyLink();
     }
 
-    function getQRTypeNumber(data, level) {
-      for (let type = 1; type <= 40; type++) {
+    // Read link
+    async function readText() {
+      let input = $('readPayload').value.trim();
+      let payload = '', pass = $('readPass').value.trim();
+
+      // If it looks like a URL, extract hash params
+      if (input.includes('#')) {
         try {
-          const rsBlocks = QRRSBlock.getRSBlocks(type, level);
-          let totalDataCount = 0; for (let i = 0; i < rsBlocks.length; i++) totalDataCount += rsBlocks[i].dataCount;
-          const lengthBits = QRUtil.getLengthInBits(QRMode.MODE_8BIT_BYTE, type);
-          if (4 + lengthBits + data.length * 8 + 4 <= totalDataCount * 8) return type;
+          const hash = input.split('#')[1];
+          const params = new URLSearchParams(hash);
+          payload = params.get('t') || '';
+          if (!pass) pass = params.get('k') || '';
         } catch (e) {}
       }
-      throw new Error('Data too long for QR');
-    }
+      // If not a URL, treat the whole input as the encrypted payload
+      if (!payload) payload = input;
 
-    function renderQR(text) {
-      const wrap = $('qrWrap'); wrap.innerHTML = '';
+      if (!payload) return alert('Please paste a link or encrypted code.');
+      if (!pass) return alert('This message needs a password. Ask the sender for it.');
       try {
-        const type = getQRTypeNumber(text, 'L');
-        const qr = QRCode(type, 'L'); qr.addData(text); qr.make();
-        const size = qr.getModuleCount();
-        const cell = 6; const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        svg.setAttribute('width', size * cell); svg.setAttribute('height', size * cell); svg.setAttribute('class', 'qr');
-        for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) if (qr.isDark(y, x)) {
-          const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-          r.setAttribute('x', x * cell); r.setAttribute('y', y * cell); r.setAttribute('width', cell); r.setAttribute('height', cell);
-          r.setAttribute('fill', '#000'); svg.appendChild(r);
-        }
-        wrap.appendChild(svg);
-      } catch (e) { console.error(e); }
+        $('readOutput').textContent = await decrypt(payload, pass);
+        $('readResult').classList.add('show');
+      } catch (e) {
+        alert('Wrong password or the code is broken.');
+      }
+    }
+    function copyReadText() {
+      const text = $('readOutput').textContent;
+      if (!text) return;
+      navigator.clipboard.writeText(text).then(() => alert('Copied!')).catch(() => alert('Could not copy.'));
     }
 
-    async function copyLink() { if (!currentLink) await createSecureLink(); copyToClipboard(currentLink); }
-    function copyKey() { if (currentKey) copyToClipboard(currentKey); else showToast('Create a link first'); }
-    async function shareLink() {
-      if (!currentLink) await createSecureLink();
-      if (navigator.share) { try { await navigator.share({ title: 'TextBridge', text: 'Open this to receive the text:', url: currentLink }); } catch (e) {} }
-      else copyToClipboard(currentLink);
-    }
-
-    async function decryptMessage() {
-      const payload = $('receivePayload').value.trim() || new URLSearchParams(location.hash.slice(1)).get('m');
-      let pass = $('receivePass').value.trim() || new URLSearchParams(location.hash.slice(1)).get('k');
-      if (!payload) return showToast('No encrypted payload found');
-      if (!pass) return showToast('Enter the passphrase');
-      try {
-        const text = await decryptText(payload, pass);
-        $('decryptedText').textContent = text;
-        $('decryptResult').classList.add('show');
-      } catch (e) { showToast('Wrong passphrase or corrupted payload'); }
-    }
-
-    function copyDecrypted() {
-      const text = $('decryptedText').textContent;
-      if (text) copyToClipboard(text);
-    }
-
-    // Auto-decrypt if URL has payload
-    window.addEventListener('DOMContentLoaded', () => {
-      const params = new URLSearchParams(location.hash.slice(1));
-      const m = params.get('m'), k = params.get('k');
-      if (m) {
-        $('receivePayload').value = m;
-        if (k) $('receivePass').value = k;
-        decryptMessage();
+    // Auto-open received link
+    window.addEventListener('load', () => {
+      const hash = location.hash.slice(1);
+      if (hash && hash.includes('t=')) {
+        showTab('read');
+        $('readPayload').value = location.href;
+        const params = new URLSearchParams(hash);
+        if (params.get('k')) $('readPass').value = params.get('k');
+        readText();
       }
     });
 
-    // ===== P2P WEBRTC MODE =====
-    let pc = null, dc = null, sharedSecret = '';
-    const stunServers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:stun1.l.google.com:19302' }] };
-
-    async function createP2P() {
-      sharedSecret = $('p2pPass').value.trim();
-      if (!sharedSecret) return showToast('Set a shared password first');
-      pc = new RTCPeerConnection(stunServers);
-      dc = pc.createDataChannel('text', { ordered: true });
-      setupDC(dc);
-      pc.onicecandidate = e => { if (!e.candidate) showOffer(); };
-      const offer = await pc.createOffer(); await pc.setLocalDescription(offer);
-      await waitForIce(pc);
-      showOffer();
-    }
-
-    async function showOffer() {
-      const offer = b64enc(JSON.stringify({ type: pc.localDescription.type, sdp: pc.localDescription.sdp }).split('').map(c => c.charCodeAt(0)));
-      $('aOfferText').value = offer;
-      $('aOffer').classList.add('show');
-      $('aStatus').textContent = 'Offer ready — send to Device B'; $('aDot').className = 'dot yellow';
-    }
-
-    async function createAnswer() {
-      sharedSecret = $('p2pPass').value.trim();
-      if (!sharedSecret) return showToast('Set the shared password first');
-      const offerStr = $('bOfferIn').value.trim();
-      if (!offerStr) return showToast('Paste the offer from Device A');
-      try {
-        const offer = JSON.parse(String.fromCharCode(...b64dec(offerStr)));
-        pc = new RTCPeerConnection(stunServers);
-        pc.ondatachannel = e => { dc = e.channel; setupDC(dc); };
-        pc.onicecandidate = e => { if (!e.candidate) showAnswer(); };
-        await pc.setRemoteDescription(offer);
-        const answer = await pc.createAnswer(); await pc.setLocalDescription(answer);
-        await waitForIce(pc);
-        showAnswer();
-      } catch (e) { showToast('Invalid offer code'); console.error(e); }
-    }
-
-    async function showAnswer() {
-      const answer = b64enc(JSON.stringify({ type: pc.localDescription.type, sdp: pc.localDescription.sdp }).split('').map(c => c.charCodeAt(0)));
-      $('bAnswerText').value = answer;
-      $('bAnswer').classList.add('show');
-    }
-
-    async function acceptAnswer() {
-      const answerStr = $('aAnswerIn').value.trim();
-      if (!answerStr) return showToast('Paste the answer from Device B');
-      try {
-        const answer = JSON.parse(String.fromCharCode(...b64dec(answerStr)));
-        await pc.setRemoteDescription(answer);
-      } catch (e) { showToast('Invalid answer code'); console.error(e); }
-    }
-
-    function waitForIce(conn) {
-      return new Promise(resolve => {
-        if (conn.iceGatheringState === 'complete') return resolve();
-        conn.onicegatheringstatechange = () => { if (conn.iceGatheringState === 'complete') resolve(); };
-        setTimeout(resolve, 3000);
-      });
-    }
-
-    function setupDC(channel) {
-      channel.onopen = () => {
-        $('chatBox').style.display = 'block';
-        $('connStatus').textContent = 'Encrypted P2P connected'; $('connDot').className = 'dot green';
-        showToast('Connected!');
-      };
-      channel.onmessage = async e => {
-        try {
-          const data = JSON.parse(e.data);
-          const text = await decryptText(data.cipher, sharedSecret);
-          $('p2pReceived').textContent = text; $('p2pReceivedBox').classList.add('show');
-          showToast('Text received');
-        } catch (err) { showToast('Failed to decrypt incoming message'); }
-      };
-    }
-
-    async function sendP2P() {
-      const text = $('p2pInput').value;
-      if (!text || !dc || dc.readyState !== 'open') return showToast('Not connected yet');
-      const cipher = await encryptText(text, sharedSecret);
-      dc.send(JSON.stringify({ cipher }));
-      $('p2pInput').value = '';
-      showToast('Sent');
-    }
-
-    function copyP2PReceived() {
-      const text = $('p2pReceived').textContent;
-      if (text && text !== 'Received text will appear here…') copyToClipboard(text);
-    }
-
-    // ===== MINIMAL QR LIBRARY =====
-    function QRCode(typeNumber, errorCorrectionLevel) {
-      const PAD0 = 0xEC, PAD1 = 0x11;
-      let _typeNumber = typeNumber, _errorCorrectionLevel = errorCorrectionLevel, _modules = null, _moduleCount = 0;
-      let _dataCache = null; const _dataList = [];
-      const proto = {
-        addData: function(data) { _dataList.push(new QR8bitByte(data)); _dataCache = null; },
-        isDark: function(row, col) { if (row < 0 || _moduleCount <= row || col < 0 || _moduleCount <= col) throw new Error(row + ',' + col); return _modules[row][col]; },
-        getModuleCount: function() { return _moduleCount; },
-        make: function() { makeImpl(false, getBestMaskPattern()); },
-      };
-      function getBestMaskPattern() {
-        let minLostPoint = 0, pattern = 0;
-        for (let i = 0; i < 8; i++) { makeImpl(true, i); const lostPoint = QRUtil.getLostPoint(proto); if (i == 0 || minLostPoint > lostPoint) { minLostPoint = lostPoint; pattern = i; } }
-        return pattern;
-      }
-      function makeImpl(test, maskPattern) {
-        _moduleCount = _typeNumber * 4 + 17;
-        _modules = new Array(_moduleCount);
-        for (let row = 0; row < _moduleCount; row++) { _modules[row] = new Array(_moduleCount); for (let col = 0; col < _moduleCount; col++) _modules[row][col] = null; }
-        setupPositionProbePattern(0, 0); setupPositionProbePattern(_moduleCount - 7, 0); setupPositionProbePattern(0, _moduleCount - 7);
-        setupPositionAdjustPattern(); setupTimingPattern(); setupTypeInfo(test, maskPattern);
-        if (_typeNumber >= 7) setupTypeNumber(test);
-        mapData(createData(), maskPattern);
-      }
-      function setupPositionProbePattern(row, col) { for (let r = -1; r <= 7; r++) { if (row + r <= -1 || _moduleCount <= row + r) continue; for (let c = -1; c <= 7; c++) { if (col + c <= -1 || _moduleCount <= col + c) continue; if ((0 <= r && r <= 6 && (c == 0 || c == 6)) || (0 <= c && c <= 6 && (r == 0 || r == 6)) || (2 <= r && r <= 4 && 2 <= c && c <= 4)) _modules[row + r][col + c] = true; else _modules[row + r][col + c] = false; } } }
-      function setupPositionAdjustPattern() { const pos = QRUtil.getPatternPosition(_typeNumber); for (let i = 0; i < pos.length; i++) for (let j = 0; j < pos.length; j++) { const row = pos[i], col = pos[j]; if (_modules[row][col] != null) continue; for (let r = -2; r <= 2; r++) for (let c = -2; c <= 2; c++) _modules[row + r][col + c] = (Math.abs(r) == 2 || Math.abs(c) == 2 || (r == 0 && c == 0)); } }
-      function setupTimingPattern() { for (let r = 8; r < _moduleCount - 8; r++) { if (_modules[r][6] == null) _modules[r][6] = (r % 2 == 0); } for (let c = 8; c < _moduleCount - 8; c++) { if (_modules[6][c] == null) _modules[6][c] = (c % 2 == 0); } }
-      function setupTypeInfo(test, maskPattern) { const data = (_errorCorrectionLevel << 3 | maskPattern); let bits = QRUtil.getBCHTypeInfo(data); for (let i = 0; i < 15; i++) { const mod = (!test && ((bits >> i) & 1) == 1); if (i < 6) _modules[8][i] = mod; else if (i < 8) _modules[8][i + 1] = mod; else _modules[8][_moduleCount - 15 + i] = mod; } for (let i = 0; i < 15; i++) { const mod = (!test && ((bits >> i) & 1) == 1); if (i < 8) _modules[_moduleCount - 1 - i][8] = mod; else if (i < 9) _modules[15 - i - 1][8] = mod; else _modules[15 - i - 1][8] = mod; } _modules[_moduleCount - 8][8] = (!test); }
-      function setupTypeNumber(test) { const bits = QRUtil.getBCHTypeNumber(_typeNumber); for (let i = 0; i < 18; i++) { const mod = (!test && ((bits >> i) & 1) == 1); _modules[Math.floor(i / 3)][i % 3 + _moduleCount - 8 - 3] = mod; } for (let i = 0; i < 18; i++) { const mod = (!test && ((bits >> i) & 1) == 1); _modules[i % 3 + _moduleCount - 8 - 3][Math.floor(i / 3)] = mod; } }
-      function createData() {
-        const rsBlocks = QRRSBlock.getRSBlocks(_typeNumber, _errorCorrectionLevel);
-        let totalDataCount = 0; for (let i = 0; i < rsBlocks.length; i++) totalDataCount += rsBlocks[i].dataCount;
-        const buffer = new QRBitBuffer();
-        for (let i = 0; i < _dataList.length; i++) {
-          const data = _dataList[i]; buffer.put(data.mode, 4); buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, _typeNumber)); data.write(buffer);
-        }
-        if (buffer.getLengthInBits() > totalDataCount * 8) throw new Error('code length overflow. (' + buffer.getLengthInBits() + '>' + totalDataCount * 8 + ')');
-        if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) buffer.put(0, 4);
-        while (buffer.getLengthInBits() % 8 != 0) buffer.putBit(false);
-        while (true) {
-          if (buffer.getLengthInBits() >= totalDataCount * 8) break;
-          buffer.put(0xEC, 8); if (buffer.getLengthInBits() >= totalDataCount * 8) break; buffer.put(0x11, 8);
-        }
-        return createBytes(buffer, rsBlocks);
-      }
-      function createBytes(buffer, rsBlocks) {
-        let offset = 0, maxDcCount = 0, maxEcCount = 0;
-        const dcdata = new Array(rsBlocks.length), ecdata = new Array(rsBlocks.length);
-        for (let r = 0; r < rsBlocks.length; r++) {
-          const dcCount = rsBlocks[r].dataCount, ecCount = rsBlocks[r].totalCount - dcCount;
-          maxDcCount = Math.max(maxDcCount, dcCount); maxEcCount = Math.max(maxEcCount, ecCount);
-          dcdata[r] = new Array(dcCount);
-          for (let i = 0; i < dcdata[r].length; i++) dcdata[r][i] = 0xff & buffer.buffer[i + offset];
-          offset += dcCount;
-          const rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount), rawPoly = new QRPolynomial(dcdata[r], rsPoly.getLength() - 1);
-          const modPoly = rawPoly.mod(rsPoly); ecdata[r] = new Array(rsPoly.getLength() - 1);
-          for (let i = 0; i < ecdata[r].length; i++) { const modIndex = i + modPoly.getLength() - ecdata[r].length; ecdata[r][i] = (modIndex >= 0) ? modPoly.get(modIndex) : 0; }
-        }
-        let totalCodeCount = 0; for (let i = 0; i < rsBlocks.length; i++) totalCodeCount += rsBlocks[i].totalCount;
-        const data = new Array(totalCodeCount); let index = 0;
-        for (let i = 0; i < maxDcCount; i++) for (let r = 0; r < rsBlocks.length; r++) if (i < dcdata[r].length) data[index++] = dcdata[r][i];
-        for (let i = 0; i < maxEcCount; i++) for (let r = 0; r < rsBlocks.length; r++) if (i < ecdata[r].length) data[index++] = ecdata[r][i];
-        return data;
-      }
-      function mapData(data, maskPattern) {
-        let inc = -1, row = _moduleCount - 1, bitIndex = 7, maskFunc = QRUtil.getMaskFunction(maskPattern), byteIndex = 0;
-        for (let col = _moduleCount - 1; col > 0; col -= 2) {
-          if (col == 6) col--;
-          while (true) {
-            for (let c = 0; c < 2; c++) if (_modules[row][col - c] == null) {
-              let dark = false; if (byteIndex < data.length) dark = (((data[byteIndex] >>> bitIndex) & 1) == 1);
-              const mask = maskFunc(row, col - c); if (mask) dark = !dark;
-              _modules[row][col - c] = dark; bitIndex--;
-              if (bitIndex == -1) { byteIndex++; bitIndex = 7; }
-            }
-            row += inc;
-            if (row < 0 || _moduleCount <= row) { row -= inc; inc = -inc; break; }
-          }
-        }
-      }
-      return proto;
-    }
-    const QRUtil = {
-      PATTERN_POSITION_TABLE: [[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],
-      G15: (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0),
-      G18: (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0),
-      G15_MASK: (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1),
-      getBCHDigit: function(data) { let digit = 0; while (data != 0) { digit++; data >>>= 1; } return digit; },
-      getBCHTypeInfo: function(data) {
-        let d = data << 10; while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) >= 0) d ^= (QRUtil.G15 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15)));
-        return ((data << 10) | d) ^ QRUtil.G15_MASK;
-      },
-      getBCHTypeNumber: function(data) {
-        let d = data << 12; while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) >= 0) d ^= (QRUtil.G18 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18)));
-        return (data << 12) | d;
-      },
-      getPatternPosition: function(typeNumber) { return QRUtil.PATTERN_POSITION_TABLE[typeNumber - 1]; },
-      getMaskFunction: function(maskPattern) { switch (maskPattern) { case 0: return function(i, j) { return (i + j) % 2 == 0; }; case 1: return function(i) { return i % 2 == 0; }; case 2: return function(i, j) { return j % 3 == 0; }; case 3: return function(i, j) { return (i + j) % 3 == 0; }; case 4: return function(i, j) { return (Math.floor(i / 2) + Math.floor(j / 3)) % 2 == 0; }; case 5: return function(i, j) { return (i * j) % 2 + (i * j) % 3 == 0; }; case 6: return function(i, j) { return ((i * j) % 2 + (i * j) % 3) % 2 == 0; }; case 7: return function(i, j) { return ((i + j) % 2 + (i * j) % 3) % 2 == 0; }; default: throw new Error('bad maskPattern:' + maskPattern); } },
-      getErrorCorrectPolynomial: function(errorCorrectLength) { let a = new QRPolynomial([1], 0); for (let i = 0; i < errorCorrectLength; i++) a = a.multiply(new QRPolynomial([1, QRMath.gexp(i)], 0)); return a; },
-      getLengthInBits: function(mode, type) { if (1 <= type && type < 10) { switch (mode) { case 1: return 10; case 2: return 9; case 4: return 8; case 8: return 8; default: throw new Error('mode:' + mode); } } else if (type < 27) { switch (mode) { case 1: return 12; case 2: return 11; case 4: return 16; case 8: return 10; default: throw new Error('mode:' + mode); } } else if (type < 41) { switch (mode) { case 1: return 14; case 2: return 13; case 4: return 16; case 8: return 12; default: throw new Error('mode:' + mode); } } else throw new Error('type:' + type); },
-      getLostPoint: function(qrCode) { let moduleCount = qrCode.getModuleCount(), lostPoint = 0; for (let row = 0; row < moduleCount; row++) for (let col = 0; col < moduleCount; col++) { let sameCount = 0, dark = qrCode.isDark(row, col); for (let r = -1; r <= 1; r++) { if (row + r < 0 || moduleCount <= row + r) continue; for (let c = -1; c <= 1; c++) { if (col + c < 0 || moduleCount <= col + c) continue; if (r == 0 && c == 0) continue; if (dark == qrCode.isDark(row + r, col + c)) sameCount++; } } if (sameCount > 5) lostPoint += (3 + sameCount - 5); } for (let row = 0; row < moduleCount - 1; row++) for (let col = 0; col < moduleCount - 1; col++) { let count = 0; if (qrCode.isDark(row, col)) count++; if (qrCode.isDark(row + 1, col)) count++; if (qrCode.isDark(row, col + 1)) count++; if (qrCode.isDark(row + 1, col + 1)) count++; if (count == 0 || count == 4) lostPoint += 3; } for (let row = 0; row < moduleCount; row++) for (let col = 0; col < moduleCount - 6; col++) if (qrCode.isDark(row, col) && !qrCode.isDark(row, col + 1) && qrCode.isDark(row, col + 2) && qrCode.isDark(row, col + 3) && qrCode.isDark(row, col + 4) && !qrCode.isDark(row, col + 5) && qrCode.isDark(row, col + 6)) { let r = col + 7; if (r < moduleCount - 6) for (let i = 0; i < 6; i++) if (qrCode.isDark(row, r + i)) break; lostPoint += 40; } for (let col = 0; col < moduleCount; col++) for (let row = 0; row < moduleCount - 6; row++) if (qrCode.isDark(row, col) && !qrCode.isDark(row + 1, col) && qrCode.isDark(row + 2, col) && qrCode.isDark(row + 3, col) && qrCode.isDark(row + 4, col) && !qrCode.isDark(row + 5, col) && qrCode.isDark(row + 6, col)) { let c = row + 7; if (c < moduleCount - 6) for (let i = 0; i < 6; i++) if (qrCode.isDark(c + i, col)) break; lostPoint += 40; } let darkCount = 0; for (let col = 0; col < moduleCount; col++) for (let row = 0; row < moduleCount; row++) if (qrCode.isDark(row, col)) darkCount++; let ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5; lostPoint += ratio * 10; return lostPoint; }
-    };
-    const QRMath = { glog: function(n) { if (n < 1) throw new Error('glog(' + n + ')'); return QRMath.LOG_TABLE[n]; }, gexp: function(n) { while (n < 0) n += 255; while (n >= 256) n -= 255; return QRMath.EXP_TABLE[n]; }, EXP_TABLE: new Array(256), LOG_TABLE: new Array(256) };
-    for (let i = 0; i < 8; i++) QRMath.EXP_TABLE[i] = 1 << i;
-    for (let i = 8; i < 256; i++) QRMath.EXP_TABLE[i] = QRMath.EXP_TABLE[i - 4] ^ QRMath.EXP_TABLE[i - 5] ^ QRMath.EXP_TABLE[i - 6] ^ QRMath.EXP_TABLE[i - 8];
-    for (let i = 0; i < 255; i++) QRMath.LOG_TABLE[QRMath.EXP_TABLE[i]] = i;
-    function QRPolynomial(num, shift) {
-      if (num.length == undefined) throw new Error(num.length + '/' + shift);
-      let offset = 0; while (offset < num.length && num[offset] == 0) offset++;
-      this.num = new Array(num.length - offset + shift); for (let i = 0; i < num.length - offset; i++) this.num[i] = num[i + offset];
-    }
-    QRPolynomial.prototype = {
-      get: function(index) { return this.num[index]; }, getLength: function() { return this.num.length; }, multiply: function(e) {
-        const num = new Array(this.getLength() + e.getLength() - 1); for (let i = 0; i < this.getLength(); i++) for (let j = 0; j < e.getLength(); j++) num[i + j] ^= QRMath.gexp(QRMath.glog(this.get(i)) + QRMath.glog(e.get(j)));
-        return new QRPolynomial(num, 0);
-      }, mod: function(e) {
-        if (this.getLength() - e.getLength() < 0) return this;
-        const ratio = QRMath.glog(this.get(0)) - QRMath.glog(e.get(0));
-        const num = new Array(this.getLength()); for (let i = 0; i < this.getLength(); i++) num[i] = this.get(i);
-        for (let i = 0; i < e.getLength(); i++) num[i] ^= QRMath.gexp(QRMath.glog(e.get(i)) + ratio);
-        return new QRPolynomial(num, 0).mod(e);
-      }
-    };
-    const QRMode = { MODE_NUMBER: 1, MODE_ALPHA_NUM: 2, MODE_8BIT_BYTE: 4, MODE_KANJI: 8 };
-    function QR8bitByte(data) { this.mode = QRMode.MODE_8BIT_BYTE; this.data = data; }
-    QR8bitByte.prototype = { getLength: function() { return this.data.length; }, write: function(buffer) { for (let i = 0; i < this.data.length; i++) buffer.put(this.data.charCodeAt(i), 8); } };
-    const QRRSBlock = { getRSBlocks: function(typeNumber, errorCorrectionLevel) {
-      const rsBlock = QRRSBlock.getRsBlockTable(typeNumber, errorCorrectionLevel); if (rsBlock == undefined) throw new Error('bad rs block @ typeNumber:' + typeNumber + '/errorCorrectionLevel:' + errorCorrectionLevel);
-      const length = rsBlock.length / 3, list = [];
-      for (let i = 0; i < length; i++) { const count = rsBlock[i * 3 + 0]; const totalCount = rsBlock[i * 3 + 1]; const dataCount = rsBlock[i * 3 + 2]; for (let j = 0; j < count; j++) list.push({ totalCount, dataCount }); }
-      return list;
-    }, getRsBlockTable: function(typeNumber, errorCorrectionLevel) { switch (errorCorrectionLevel) { case 'L': return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0]; case 'M': return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1]; case 'Q': return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2]; case 'H': return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3]; default: return undefined; } },
-      RS_BLOCK_TABLE: [[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,15],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,19],[4,40,14,2,41,15],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[2,86,68,2,87,69],[4,69,43,1,70,44],[6,43,19,2,44,20],[6,43,15,2,44,16],[4,101,81],[1,80,50,4,81,51],[4,50,22,4,51,23],[3,36,12,8,37,13],[2,116,92,2,117,93],[6,58,36,2,59,37],[4,46,20,6,47,21],[7,42,14,4,43,15],[4,133,107],[8,59,37,1,60,38],[8,44,20,4,45,21],[12,33,11,4,34,12],[3,145,115,1,146,116],[4,64,40,5,65,41],[11,36,16,5,37,17],[11,36,12,5,37,13],[5,109,87,1,110,88],[5,65,41,5,66,42],[5,54,24,7,55,25],[11,36,12,7,37,13],[5,122,98,1,123,99],[7,73,45,3,74,46],[15,43,19,2,44,20],[3,45,15,13,46,16],[1,135,107,5,136,108],[10,74,46,1,75,47],[1,50,22,15,51,23],[2,42,14,17,43,15],[5,150,120,1,151,121],[9,69,43,4,70,44],[17,50,22,1,51,23],[2,42,14,19,43,15],[3,141,113,4,142,114],[3,70,44,11,71,45],[17,47,21,4,48,22],[9,39,13,16,40,14],[3,135,107,5,136,108],[3,67,41,13,68,42],[15,54,24,5,55,25],[15,43,15,10,44,16],[4,144,116,4,145,117],[17,68,42],[17,50,22,6,51,23],[19,46,16,6,47,17],[2,139,111,7,140,112],[17,74,46],[7,54,24,16,55,25],[34,37,13],[4,151,121,5,152,122],[4,75,47,14,76,48],[11,54,24,14,55,25],[16,45,15,14,46,16],[6,147,117,4,148,118],[6,73,45,14,74,46],[11,54,24,16,55,25],[30,46,16,2,47,17],[8,132,106,4,133,107],[8,75,47,13,76,48],[7,54,24,22,55,25],[22,45,15,13,46,16],[10,142,114,2,143,115],[19,74,46,4,75,47],[28,50,22,6,51,23],[33,46,16,4,47,17],[8,152,122,4,153,123],[22,73,45,3,74,46],[8,53,23,26,54,24],[12,45,15,28,46,16],[3,147,117,10,148,118],[3,73,45,23,74,46],[4,54,24,31,55,25],[11,45,15,31,46,16],[7,146,116,7,147,117],[21,73,45,7,74,46],[1,53,23,37,54,24],[19,45,15,26,46,16],[5,145,115,10,146,116],[19,75,47,10,76,48],[15,54,24,25,55,25],[23,45,15,25,46,16],[13,145,115,3,146,116],[2,74,46,29,75,47],[42,54,24,1,55,25],[23,45,15,28,46,16],[17,145,115],[10,74,46,23,75,47],[10,54,24,35,55,25],[19,45,15,35,46,16],[17,145,115,1,146,116],[14,74,46,21,75,47],[29,54,24,19,55,25],[11,45,15,46,46,16],[13,145,115,6,146,116],[14,74,46,23,75,47],[44,54,24,7,55,25],[59,46,16,1,47,17],[12,151,121,7,152,122],[12,75,47,26,76,48],[39,54,24,14,55,25],[22,45,15,41,46,16],[6,151,121,14,152,122],[6,75,47,34,76,48],[46,54,24,10,55,25],[2,45,15,64,46,16],[17,152,122,4,153,123],[29,74,46,14,75,47],[49,54,24,10,55,25],[24,45,15,46,46,16],[4,152,122,18,153,123],[13,74,46,32,75,47],[48,54,24,14,55,25],[42,45,15,32,46,16],[20,147,117,4,148,118],[40,75,47,7,76,48],[43,54,24,22,55,25],[10,45,15,67,46,16],[19,148,118,2,149,119],[18,75,47,31,76,48],[34,54,24,34,55,25],[20,45,15,61,46,16]] };
-    function QRBitBuffer() { this.buffer = []; this.length = 0; }
-    QRBitBuffer.prototype = { get: function(index) { const bufIndex = Math.floor(index / 8); return ((this.buffer[bufIndex] >>> (7 - index % 8)) & 1) == 1; }, put: function(num, length) { for (let i = 0; i < length; i++) this.putBit(((num >>> (length - i - 1)) & 1) == 1); }, getLengthInBits: function() { return this.length; }, putBit: function(bit) { const bufIndex = Math.floor(this.length / 8); if (this.buffer.length <= bufIndex) this.buffer.push(0); if (bit) this.buffer[bufIndex] |= (0x80 >>> (this.length % 8)); this.length++; } };
-
-    // Service Worker registration
+    // Offline support
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
   </script>
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0c97522db463029',t:'MTc4MTYwOTE2NQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0c988ff08c05464',t:'MTc4MTYwOTk3OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
