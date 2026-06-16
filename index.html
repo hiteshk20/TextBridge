@@ -3,353 +3,337 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TextBridge — Send text to any device</title>
-  <meta name="description" content="Share text between devices securely. No server, no login, no cost." />
+  <title>TextBridge — Live Messaging</title>
+  <meta name="description" content="Live messaging with no backend. Small key, public inbox, free forever." />
   <link rel="manifest" href="manifest.json" />
   <style>
     * { box-sizing: border-box; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       margin: 0;
-      background: #f8f9fa;
+      background: #f6f7f9;
       color: #1a1a1a;
       line-height: 1.5;
     }
-    .wrap {
-      max-width: 640px;
-      margin: 0 auto;
-      padding: 32px 20px 60px;
+    .wrap { max-width: 720px; margin: 0 auto; padding: 28px 18px 50px; }
+    header { margin-bottom: 22px; }
+    h1 { font-size: 1.5rem; font-weight: 600; margin: 0 0 4px; }
+    .tagline { color: #555; font-size: 0.95rem; margin: 0; }
+    .status { font-size: 0.8rem; color: #777; margin-bottom: 16px; }
+    .status span { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #ccc; margin-right: 6px; }
+    .status.connected span { background: #28a745; }
+    .status.error span { background: #dc3545; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 18px; }
+    .tab { flex: 1; padding: 10px; border: 1px solid #d0d4d9; background: #fff; border-radius: 8px; cursor: pointer; font-weight: 500; color: #444; }
+    .tab.active { background: #1a73e8; color: #fff; border-color: #1a73e8; }
+    .card { background: #fff; border: 1px solid #e2e4e7; border-radius: 10px; padding: 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+    label { display: block; font-size: 0.85rem; font-weight: 500; color: #444; margin-bottom: 6px; margin-top: 14px; }
+    label:first-child { margin-top: 0; }
+    input, textarea, button { font-family: inherit; font-size: 0.95rem; }
+    input[type="text"], textarea {
+      width: 100%; padding: 11px 13px; border: 1px solid #d0d4d9; border-radius: 8px; outline: none;
     }
-    header { margin-bottom: 28px; }
-    h1 {
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin: 0 0 6px;
-      letter-spacing: -0.02em;
-    }
-    .tagline {
-      color: #5a5a5a;
-      font-size: 0.95rem;
-      margin: 0;
-    }
-    .card {
-      background: #fff;
-      border: 1px solid #e2e4e7;
-      border-radius: 10px;
-      padding: 22px;
-      margin-bottom: 18px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-    }
-    .tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 20px;
-    }
-    .tab {
-      flex: 1;
-      padding: 10px;
-      text-align: center;
-      border: 1px solid #e2e4e7;
-      background: #fff;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 500;
-      font-size: 0.95rem;
-      color: #444;
-    }
-    .tab.active {
-      background: #1a73e8;
-      color: #fff;
-      border-color: #1a73e8;
-    }
-    label {
-      display: block;
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: #444;
-      margin-bottom: 6px;
-    }
-    textarea, input[type="text"] {
-      width: 100%;
-      padding: 12px 14px;
-      border: 1px solid #d0d4d9;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-family: inherit;
-      color: #1a1a1a;
-      background: #fff;
-      resize: vertical;
-      outline: none;
-    }
-    textarea { min-height: 140px; }
-    textarea:focus, input:focus { border-color: #1a73e8; }
-    .hint {
-      font-size: 0.82rem;
-      color: #666;
-      margin-top: 6px;
-    }
-    .row { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+    textarea { min-height: 90px; resize: vertical; }
+    input:focus, textarea:focus { border-color: #1a73e8; }
+    .row { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
     .btn {
-      padding: 11px 18px;
-      border-radius: 8px;
-      border: 1px solid #d0d4d9;
-      background: #fff;
-      color: #1a73e8;
-      font-weight: 500;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: background 0.15s;
+      padding: 10px 16px; border-radius: 8px; border: 1px solid #d0d4d9; background: #fff; color: #1a73e8; cursor: pointer; font-weight: 500;
     }
     .btn:hover { background: #f1f6fd; }
-    .btn-primary {
-      background: #1a73e8;
-      color: #fff;
-      border-color: #1a73e8;
-    }
+    .btn-primary { background: #1a73e8; color: #fff; border-color: #1a73e8; }
     .btn-primary:hover { background: #1557b0; }
-    .result {
-      display: none;
-      margin-top: 16px;
-      padding: 14px;
-      background: #f1f6fd;
-      border: 1px solid #c6d9f5;
-      border-radius: 8px;
-    }
-    .result.show { display: block; }
-    .link-box {
-      word-break: break-all;
-      font-size: 0.9rem;
-      color: #1a1a1a;
-      margin-bottom: 10px;
-    }
-    .read-result {
-      white-space: pre-wrap;
-      font-size: 1rem;
-      color: #1a1a1a;
-      margin-bottom: 10px;
-    }
-    .footer {
-      text-align: center;
-      font-size: 0.8rem;
-      color: #777;
-      margin-top: 24px;
-    }
     .hidden { display: none !important; }
-    .section-title {
-      font-size: 1.05rem;
-      font-weight: 600;
-      margin: 0 0 10px;
+    .hint { font-size: 0.82rem; color: #666; margin-top: 6px; }
+    .messages {
+      border: 1px solid #e2e4e7; border-radius: 8px; padding: 12px; min-height: 160px; max-height: 360px; overflow-y: auto;
+      background: #fafafa; margin-top: 14px;
     }
-    .steps {
-      background: #f8f9fa;
-      border: 1px solid #e2e4e7;
-      border-radius: 8px;
-      padding: 14px 16px;
-      margin-bottom: 20px;
-      font-size: 0.9rem;
-      color: #444;
+    .msg { padding: 8px 10px; margin-bottom: 8px; background: #fff; border-radius: 6px; border: 1px solid #e2e4e7; }
+    .msg:last-child { margin-bottom: 0; }
+    .msg-meta { font-size: 0.75rem; color: #888; margin-bottom: 4px; }
+    .id-box {
+      background: #f1f6fd; border: 1px solid #c6d9f5; border-radius: 8px; padding: 12px; font-size: 1.1rem; font-weight: 600; color: #1a73e8;
+      word-break: break-all; margin-top: 6px;
     }
-    .steps ol { margin: 0; padding-left: 20px; }
-    .steps li { margin-bottom: 6px; }
+    .footer { text-align: center; font-size: 0.75rem; color: #888; margin-top: 24px; }
+    .note {
+      background: #fff8e1; border: 1px solid #ffe082; border-radius: 8px; padding: 12px; font-size: 0.85rem; color: #6d5c1e; margin-bottom: 16px;
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
       <h1>TextBridge</h1>
-      <p class="tagline">Send text to any device. No app install. No login. No cost.</p>
+      <p class="tagline">Open the website, say a small key, and start messaging.</p>
     </header>
 
-    <div class="steps">
-      <ol>
-        <li>Open this website on the device that has the text.</li>
-        <li>Paste the text and create a secure link.</li>
-        <li>Send the link to the other person through WhatsApp, email, SMS, etc.</li>
-        <li>They open the link in their browser and read the text instantly.</li>
-      </ol>
+    <div class="status" id="status"><span></span>Connecting to free relay…</div>
+
+    <div class="tabs">
+      <button class="tab active" id="tabChat" onclick="showTab('chat')">Live Chat</button>
+      <button class="tab" id="tabInbox" onclick="showTab('inbox')">My Inbox</button>
     </div>
 
     <main class="card">
-      <div class="tabs">
-        <button class="tab active" id="tabSend" onclick="showTab('send')">Send text</button>
-        <button class="tab" id="tabRead" onclick="showTab('read')">Read text</button>
-      </div>
-
-      <!-- SEND -->
-      <div id="sendView">
-        <label for="sendText">Text to send</label>
-        <textarea id="sendText" placeholder="Paste or type your message here…"></textarea>
-
-        <label for="sendPass" style="margin-top: 16px;">Password (optional)</label>
-        <input type="text" id="sendPass" placeholder="Leave blank for automatic password" />
-        <p class="hint">If you leave this blank, the password is included in the link so the other person only needs to open it. If you set a password, share it with them separately.</p>
-
-        <div class="row">
-          <button class="btn btn-primary" onclick="createLink()">Create secure link</button>
+      <!-- LIVE CHAT -->
+      <div id="chatView">
+        <div class="note">
+          Both people open this website, enter the same small key, and start chatting. No link, no signup, no app install.
         </div>
 
-        <div class="result" id="sendResult">
-          <div class="section-title">Your secure link</div>
-          <div class="link-box" id="linkBox"></div>
+        <label for="chatKey">Room key</label>
+        <input type="text" id="chatKey" placeholder="e.g. happy-cat-7" />
+        <p class="hint">Use a simple key you can say out loud. Both people must type the same key.</p>
+
+        <div class="row">
+          <button class="btn btn-primary" onclick="joinChat()">Join room</button>
+          <button class="btn" onclick="newRandomKey()">New random key</button>
+        </div>
+
+        <div id="chatBox" class="hidden">
+          <label>Messages</label>
+          <div class="messages" id="chatMessages"></div>
           <div class="row">
-            <button class="btn" onclick="copyLink()">Copy link</button>
-            <button class="btn" onclick="shareLink()">Share</button>
+            <input type="text" id="chatInput" placeholder="Type a message" style="flex:1;" onkeydown="if(event.key==='Enter') sendChat()" />
+            <button class="btn btn-primary" onclick="sendChat()">Send</button>
           </div>
         </div>
       </div>
 
-      <!-- READ -->
-      <div id="readView" class="hidden">
-        <label for="readPayload">Paste the link or the encrypted code here</label>
-        <textarea id="readPayload" placeholder="https://yourname.github.io/textbridge/#t=...&k=...
-Or paste the long encrypted code only"></textarea>
-
-        <label for="readPass" style="margin-top: 16px;">Password</label>
-        <input type="text" id="readPass" placeholder="Only needed if you set a custom password" />
-
-        <div class="row">
-          <button class="btn btn-primary" onclick="readText()">Read text</button>
+      <!-- MY INBOX -->
+      <div id="inboxView" class="hidden">
+        <div class="note">
+          Anyone who knows your public ID can send you a message. Messages are encrypted so only you can read them.
         </div>
 
-        <div class="result" id="readResult">
-          <div class="section-title">Message</div>
-          <div class="read-result" id="readOutput"></div>
+        <label>My public ID</label>
+        <div class="id-box" id="myId">Loading…</div>
+        <div class="row">
+          <button class="btn" onclick="copyMyId()">Copy ID</button>
+          <button class="btn" onclick="resetIdentity()">New ID</button>
+        </div>
+        <p class="hint">Share this ID with people. Anyone can send you a message by typing it in the "Send to ID" box.</p>
+
+        <div style="margin-top: 24px; border-top: 1px solid #e2e4e7; padding-top: 20px;">
+          <label for="toId">Send to ID</label>
+          <input type="text" id="toId" placeholder="e.g. happy-cat-7" />
+          <label for="toMessage">Message</label>
+          <textarea id="toMessage" placeholder="Type your message…"></textarea>
           <div class="row">
-            <button class="btn" onclick="copyReadText()">Copy text</button>
+            <button class="btn btn-primary" onclick="sendToInbox()">Send message</button>
           </div>
+        </div>
+
+        <div style="margin-top: 24px;">
+          <label>My received messages</label>
+          <div class="messages" id="inboxMessages"></div>
         </div>
       </div>
     </main>
 
     <div class="footer">
-      Works on every device with a browser. No server stores your data.
+      Uses a free public relay. Your messages are encrypted. No account or server needed.
     </div>
   </div>
 
+  <script src="https://unpkg.com/mqtt/dist/mqtt.js"></script>
   <script>
-    // Simple helpers
-    function $(id) { return document.getElementById(id); }
-    function b64enc(buf) {
-      return btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-    }
-    function b64dec(str) {
-      str += new Array(5 - str.length % 4).join('=');
+    // ===== UTILS =====
+    const $ = id => document.getElementById(id);
+    const b64enc = buf => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    const b64dec = str => {
+      const pad = (4 - str.length % 4) % 4;
+      str += '='.repeat(pad);
       return Uint8Array.from(atob(str.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
+    };
+    const words = {
+      adj: ['happy','lucky','brave','calm','bright','kind','quick','smart','cool','warm','sunny','bold','witty','noble','gentle'],
+      noun: ['cat','dog','fox','bird','fish','wolf','bear','lion','tiger','duck','frog','deer','hawk','owl','seal']
+    };
+    function randomId() {
+      const adj = words.adj[Math.floor(Math.random() * words.adj.length)];
+      const noun = words.noun[Math.floor(Math.random() * words.noun.length)];
+      const num = Math.floor(Math.random() * 90) + 10;
+      return `${adj}-${noun}-${num}`;
     }
-    function randomPass() {
-      const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
-      return Array.from(crypto.getRandomValues(new Uint8Array(12))).map(b => chars[b % chars.length]).join('');
+    function setStatus(text, type) {
+      const s = $('status'); s.innerHTML = '<span></span>' + text; s.className = 'status ' + (type || '');
     }
-    async function deriveKey(password, salt) {
-      const mat = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), { name: 'PBKDF2' }, false, ['deriveKey']);
-      return crypto.subtle.deriveKey(
-        { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
-        mat, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
-      );
+
+    // ===== CRYPTO =====
+    async function getRoomKey(key) {
+      const salt = new TextEncoder().encode('textbridge-room-' + key);
+      const mat = await crypto.subtle.importKey('raw', new TextEncoder().encode(key), 'PBKDF2', false, ['deriveKey']);
+      return crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' }, mat, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
     }
-    async function encrypt(plain, password) {
-      const salt = crypto.getRandomValues(new Uint8Array(16));
+    async function encryptSym(plain, key) {
+      const aes = await getRoomKey(key);
       const iv = crypto.getRandomValues(new Uint8Array(12));
-      const key = await deriveKey(password, salt);
-      const cipher = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(plain));
-      const out = new Uint8Array(salt.length + iv.length + cipher.byteLength);
-      out.set(salt, 0); out.set(iv, salt.length); out.set(new Uint8Array(cipher), salt.length + iv.length);
+      const cipher = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, aes, new TextEncoder().encode(plain));
+      const out = new Uint8Array(12 + cipher.byteLength); out.set(iv, 0); out.set(new Uint8Array(cipher), 12);
       return b64enc(out);
     }
-    async function decrypt(payload, password) {
+    async function decryptSym(payload, key) {
+      const aes = await getRoomKey(key);
+      const data = b64dec(payload); const iv = data.slice(0, 12); const cipher = data.slice(12);
+      return new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, aes, cipher));
+    }
+
+    async function generateIdentity() {
+      const pair = await crypto.subtle.generateKey({ name: 'ECDH', namedCurve: 'P-256' }, true, ['deriveKey']);
+      const pub = await crypto.subtle.exportKey('spki', pair.publicKey);
+      const priv = await crypto.subtle.exportKey('pkcs8', pair.privateKey);
+      return { username: randomId(), publicKey: b64enc(pub), privateKey: b64enc(priv) };
+    }
+    async function importPubKey(b64) { return crypto.subtle.importKey('spki', b64dec(b64), { name: 'ECDH', namedCurve: 'P-256' }, false, []); }
+    async function importPrivKey(b64) { return crypto.subtle.importKey('pkcs8', b64dec(b64), { name: 'ECDH', namedCurve: 'P-256' }, false, ['deriveKey']); }
+    async function deriveShared(privKey, pubKey) { return crypto.subtle.deriveKey({ name: 'ECDH', public: pubKey }, privKey, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']); }
+    async function encryptAsym(plain, recipientPubKey) {
+      const ephemeral = await crypto.subtle.generateKey({ name: 'ECDH', namedCurve: 'P-256' }, true, ['deriveKey']);
+      const shared = await deriveShared(ephemeral.privateKey, recipientPubKey);
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const cipher = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, shared, new TextEncoder().encode(plain));
+      const ephPub = await crypto.subtle.exportKey('spki', ephemeral.publicKey);
+      const len = new Uint8Array(2); len[0] = (ephPub.byteLength >> 8) & 0xff; len[1] = ephPub.byteLength & 0xff;
+      const out = new Uint8Array(2 + ephPub.byteLength + 12 + cipher.byteLength);
+      out.set(len, 0); out.set(new Uint8Array(ephPub), 2); out.set(iv, 2 + ephPub.byteLength); out.set(new Uint8Array(cipher), 2 + ephPub.byteLength + 12);
+      return b64enc(out);
+    }
+    async function decryptAsym(payload, privKey) {
       const data = b64dec(payload);
-      const salt = data.slice(0, 16), iv = data.slice(16, 28), cipher = data.slice(28);
-      const key = await deriveKey(password, salt);
-      const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, cipher);
-      return new TextDecoder().decode(plain);
+      const pubLen = (data[0] << 8) | data[1];
+      const ephPub = await importPubKey(b64enc(data.slice(2, 2 + pubLen)));
+      const iv = data.slice(2 + pubLen, 2 + pubLen + 12);
+      const cipher = data.slice(2 + pubLen + 12);
+      const shared = await deriveShared(privKey, ephPub);
+      return new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, shared, cipher));
     }
 
-    // Tabs
-    function showTab(name) {
-      $('sendView').classList.toggle('hidden', name !== 'send');
-      $('readView').classList.toggle('hidden', name !== 'read');
-      $('tabSend').classList.toggle('active', name === 'send');
-      $('tabRead').classList.toggle('active', name === 'read');
+    // ===== MQTT =====
+    let client = null;
+    let myIdentity = null;
+    let currentRoom = null;
+    const pendingKeys = {};
+    const BROKER = 'wss://broker.hivemq.com:8000/mqtt';
+
+    function connectMQTT() {
+      if (client) return client;
+      const clientId = 'tb_' + Math.random().toString(36).slice(2, 10);
+      client = mqtt.connect(BROKER, { clientId, reconnectPeriod: 5000, keepalive: 60 });
+      client.on('connect', () => setStatus('Connected to free relay', 'connected'));
+      client.on('error', () => setStatus('Relay error', 'error'));
+      client.on('offline', () => setStatus('Relay offline — reconnecting', 'error'));
+      client.on('message', (topic, message) => handleMessage(topic, message.toString()));
+      return client;
     }
 
-    // Create link
-    let currentLink = '';
-    async function createLink() {
-      const text = $('sendText').value;
-      if (!text.trim()) return alert('Please type or paste some text first.');
-      let pass = $('sendPass').value.trim();
-      if (!pass) pass = randomPass();
-      try {
-        const encrypted = await encrypt(text, pass);
-        const url = new URL(location.href);
-        url.hash = '#t=' + encodeURIComponent(encrypted) + '&k=' + encodeURIComponent(pass);
-        currentLink = url.toString();
-        $('linkBox').textContent = currentLink;
-        $('sendResult').classList.add('show');
-      } catch (e) {
-        alert('Could not create link. Please try again.');
-      }
-    }
-    function copyLink() {
-      if (!currentLink) return;
-      navigator.clipboard.writeText(currentLink).then(() => alert('Link copied!')).catch(() => {
-        const t = document.createElement('textarea'); t.value = currentLink; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); alert('Link copied!');
-      });
-    }
-    async function shareLink() {
-      if (!currentLink) await createLink();
-      if (navigator.share) {
-        try { await navigator.share({ title: 'TextBridge', text: 'Here is the text:', url: currentLink }); return; } catch (e) {}
-      }
-      copyLink();
-    }
-
-    // Read link
-    async function readText() {
-      let input = $('readPayload').value.trim();
-      let payload = '', pass = $('readPass').value.trim();
-
-      // If it looks like a URL, extract hash params
-      if (input.includes('#')) {
+    async function handleMessage(topic, msg) {
+      if (topic.startsWith('textbridge/room/')) {
+        const room = topic.split('/')[2];
+        if (room === currentRoom) {
+          try { addChatMsg('Other', await decryptSym(msg, room)); } catch (e) { addChatMsg('Other', '(unreadable message)'); }
+        }
+      } else if (topic.endsWith('/pubkey')) {
+        const user = topic.split('/')[2];
+        if (pendingKeys[user]) { pendingKeys[user].resolve(msg); delete pendingKeys[user]; }
+      } else if (topic.endsWith('/inbox')) {
+        if (!myIdentity) return;
         try {
-          const hash = input.split('#')[1];
-          const params = new URLSearchParams(hash);
-          payload = params.get('t') || '';
-          if (!pass) pass = params.get('k') || '';
-        } catch (e) {}
+          const priv = await importPrivKey(myIdentity.privateKey);
+          addInboxMsg(await decryptAsym(msg, priv));
+        } catch (e) { addInboxMsg('(unreadable message)'); }
       }
-      // If not a URL, treat the whole input as the encrypted payload
-      if (!payload) payload = input;
+    }
 
-      if (!payload) return alert('Please paste a link or encrypted code.');
-      if (!pass) return alert('This message needs a password. Ask the sender for it.');
+    // ===== UI TABS =====
+    function showTab(name) {
+      $('chatView').classList.toggle('hidden', name !== 'chat');
+      $('inboxView').classList.toggle('hidden', name !== 'inbox');
+      $('tabChat').classList.toggle('active', name === 'chat');
+      $('tabInbox').classList.toggle('active', name === 'inbox');
+      if (name === 'inbox') initInbox();
+    }
+
+    // ===== LIVE CHAT =====
+    function newRandomKey() { $('chatKey').value = randomId(); }
+    function joinChat() {
+      const key = $('chatKey').value.trim();
+      if (!key) return alert('Please enter a room key');
+      currentRoom = key;
+      connectMQTT();
+      client.subscribe('textbridge/room/' + key);
+      $('chatBox').classList.remove('hidden');
+      $('chatMessages').innerHTML = '<div class="msg"><div class="msg-meta">System</div>Joined room: ' + key + '</div>';
+    }
+    function addChatMsg(from, text) {
+      const div = document.createElement('div'); div.className = 'msg';
+      div.innerHTML = '<div class="msg-meta">' + from + ' · ' + new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) + '</div>' + text;
+      $('chatMessages').appendChild(div); $('chatMessages').scrollTop = $('chatMessages').scrollHeight;
+    }
+    async function sendChat() {
+      const input = $('chatInput'); const text = input.value.trim();
+      if (!text || !currentRoom) return;
+      const c = connectMQTT();
+      c.publish('textbridge/room/' + currentRoom, await encryptSym(text, currentRoom));
+      addChatMsg('Me', text); input.value = '';
+    }
+
+    // ===== INBOX =====
+    async function initInbox() {
+      if (myIdentity) return;
+      const saved = localStorage.getItem('textbridge-id');
+      myIdentity = saved ? JSON.parse(saved) : await generateIdentity();
+      localStorage.setItem('textbridge-id', JSON.stringify(myIdentity));
+      $('myId').textContent = myIdentity.username;
+      const c = connectMQTT();
+      c.publish('textbridge/user/' + myIdentity.username + '/pubkey', myIdentity.publicKey, { retain: true });
+      c.subscribe('textbridge/user/' + myIdentity.username + '/inbox');
+    }
+    function copyMyId() { if (!myIdentity) return; copyText(myIdentity.username); }
+    async function resetIdentity() {
+      if (!confirm('This will create a new ID. Old messages to your current ID will no longer be readable here.')) return;
+      myIdentity = await generateIdentity();
+      localStorage.setItem('textbridge-id', JSON.stringify(myIdentity));
+      $('myId').textContent = myIdentity.username;
+      const c = connectMQTT();
+      c.publish('textbridge/user/' + myIdentity.username + '/pubkey', myIdentity.publicKey, { retain: true });
+      c.subscribe('textbridge/user/' + myIdentity.username + '/inbox');
+    }
+    async function sendToInbox() {
+      const toId = $('toId').value.trim(); const text = $('toMessage').value.trim();
+      if (!toId || !text) return alert('Please enter an ID and a message');
+      const c = connectMQTT();
+      c.subscribe('textbridge/user/' + toId + '/pubkey');
+      const pubKeyB64 = await new Promise((resolve, reject) => {
+        pendingKeys[toId] = { resolve, reject };
+        setTimeout(() => { delete pendingKeys[toId]; reject('timeout'); }, 12000);
+      }).catch(() => { alert('Could not find that ID. Make sure it is correct and online.'); return null; });
+      c.unsubscribe('textbridge/user/' + toId + '/pubkey');
+      if (!pubKeyB64) return;
       try {
-        $('readOutput').textContent = await decrypt(payload, pass);
-        $('readResult').classList.add('show');
-      } catch (e) {
-        alert('Wrong password or the code is broken.');
-      }
+        const pub = await importPubKey(pubKeyB64);
+        c.publish('textbridge/user/' + toId + '/inbox', await encryptAsym(text, pub));
+        $('toMessage').value = ''; alert('Message sent');
+      } catch (e) { alert('Failed to send message'); }
     }
-    function copyReadText() {
-      const text = $('readOutput').textContent;
-      if (!text) return;
-      navigator.clipboard.writeText(text).then(() => alert('Copied!')).catch(() => alert('Could not copy.'));
+    function addInboxMsg(text) {
+      const div = document.createElement('div'); div.className = 'msg';
+      div.innerHTML = '<div class="msg-meta">' + new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) + '</div>' + text;
+      $('inboxMessages').appendChild(div); $('inboxMessages').scrollTop = $('inboxMessages').scrollHeight;
     }
 
-    // Auto-open received link
+    // ===== COPY =====
+    function copyText(text) {
+      if (navigator.clipboard) navigator.clipboard.writeText(text).then(() => alert('Copied: ' + text));
+      else { const t = document.createElement('textarea'); t.value = text; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); alert('Copied: ' + text); }
+    }
+
+    // ===== INIT =====
     window.addEventListener('load', () => {
-      const hash = location.hash.slice(1);
-      if (hash && hash.includes('t=')) {
-        showTab('read');
-        $('readPayload').value = location.href;
-        const params = new URLSearchParams(hash);
-        if (params.get('k')) $('readPass').value = params.get('k');
-        readText();
-      }
+      connectMQTT();
+      newRandomKey();
     });
-
-    // Offline support
-    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
   </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0c988ff08c05464',t:'MTc4MTYwOTk3OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0c9a0307a598e74',t:'MTc4MTYxMDkyOA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
